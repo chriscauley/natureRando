@@ -9,6 +9,7 @@ from game import Game
 from item_data import Item, Items, items_unpackable
 from loadout import Loadout
 from location_data import Location, pullCSV, spacePortLocs
+from logicCasual import Casual
 from logicExpert import Expert
 import logic_updater
 import fillAssumed
@@ -53,13 +54,12 @@ fillers: dict[str, Type[FillAlgorithm]] = {
 
 
 # main program
-def Main(argv: list[str], romWriter: Optional[RomWriter] = None) -> None:
-    game = generate()
-    rom_name = write_rom(game)
+def Main(options: dict, romWriter: Optional[RomWriter] = None) -> None:
+    game = generate(options)
+    rom_name = write_rom(options, game)
     write_spoiler_file(game, rom_name)
 
-def generate() -> Game:
-    logicChoice = "E"
+def generate(options: dict) -> Game:
     fillChoice = "D"
     areaA = ""
     
@@ -68,7 +68,7 @@ def generate() -> Game:
     # while hudFlicker != "Y" and hudFlicker != "N" :
     #     hudFlicker= input("Enter Y to patch HUD flicker on emulator, or N to decline:")
     #     hudFlicker = hudFlicker.title()
-    seeeed = random.randint(0, 9999999)
+    seeeed = options['seed']
     random.seed(seeeed)
 
 
@@ -77,7 +77,7 @@ def generate() -> Game:
     
     seedComplete = False
     randomizeAttempts = 0
-    game = Game(Expert,
+    game = Game(options['logic'],
                 csvdict,
                 areaA == "A",
                 VanillaAreas(),
@@ -139,7 +139,7 @@ def assumed_fill(game: Game) -> tuple[bool]:
 
     return False
 
-def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
+def write_rom(options: dict, game: Game, romWriter: Optional[RomWriter] = None) -> str:
     
     logicChoice = "E"
 
@@ -148,7 +148,7 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
 
     rom_name = f"Nature{game.seed}.sfc"
     rom1_path = f"roms/{rom_name}"
-    rom_clean_path = "roms/Nature.sfc"
+    rom_clean_path = options.get('rom', "roms/Nature.sfc")
 
     if romWriter is None :
         romWriter = RomWriter.fromFilePaths(origRomPath=rom_clean_path)
@@ -287,6 +287,29 @@ def forward_fill(game: Game,
 if __name__ == "__main__":
     import time
     t0 = time.perf_counter()
-    Main(sys.argv)
+    options = {
+        'logic': Expert,
+        'seed': random.randint(0, 9999999),
+        'rom': 'roms/Nature.sfc',
+    }
+    args = sys.argv[:]
+    while args:
+        option = args.pop(0)
+        if option in ['-l', '--logic']:
+            logic = args.pop(0).lower()
+            if option.startswith('e'):
+                options['logic'] = Expert
+            elif option.startswith('c'):
+                options['logic'] = Casual
+            else:
+                print(f'Warning: unrecognized option "{logic}"')
+        elif option in ['-s', '--seed']:
+            options['seed'] = int(args.pop(0))
+        elif option in ['-r', '--rom']:
+            options['rom'] = args.pop(0)
+        else:
+            print(f'Warning: unrecognized option "{option}"')
+
+    Main(options)
     t1 = time.perf_counter()
     print(f"time taken: {t1 - t0}")
