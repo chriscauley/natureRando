@@ -262,7 +262,7 @@ canSBJ = LogicShortcut(lambda loadout: (
 ))
 
 waterJump6 = LogicShortcut(lambda loadout: (
-    (Gravity in loadout) or
+    (GravitySuit in loadout) or
     (HiJump in loadout) or
     (canSBJ in loadout) or
     (canStoreShinespark in loadout)
@@ -274,7 +274,7 @@ phantoon = LogicShortcut(lambda loadout: (
     (Super in loadout) and
     (
         (waterJump6 in loadout) or
-        (ice in loadout) # freeze covern
+        (Ice in loadout) # freeze covern
     )
 
 ))
@@ -352,7 +352,10 @@ location_logic: LocationLogicType = {
     ),
     "Right of Ship Missile": lambda loadout: (
         (canUseBombs in loadout) and
-        (shipFront in loadout)
+        (
+            (shipFront in loadout) or
+            (pinkDoor in loadout)
+        )
     ),
     "Parlor Fleas": lambda loadout: (
         (pinkDoor in loadout)
