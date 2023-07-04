@@ -167,7 +167,7 @@ shipFront = LogicShortcut(lambda loadout: (
                 (GravitySuit in loadout)
                 )
             )
-        )   
+        )
 ))
 inBrinstar = LogicShortcut(lambda loadout: (
     (canUsePB in loadout) and

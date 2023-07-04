@@ -1,5 +1,6 @@
 import random
 import sys
+import os
 from typing import Literal, Optional, Type
 import argparse
 
@@ -57,7 +58,10 @@ fillers: dict[str, Type[FillAlgorithm]] = {
 def Main(options: dict, romWriter: Optional[RomWriter] = None) -> None:
     game = generate(options)
     rom_name = write_rom(options, game)
-    write_spoiler_file(game, rom_name)
+    dest_dir = None
+    if options.get('destination'):
+        dest_dir = os.path.dirname(options['destination'])
+    write_spoiler_file(game, rom_name, dest_dir)
 
 def generate(options: dict) -> Game:
     fillChoice = "D"
@@ -77,7 +81,10 @@ def generate(options: dict) -> Game:
     
     seedComplete = False
     randomizeAttempts = 0
-    game = Game(options['logic'],
+    logic = Expert
+    if options['logic'] == 'casual':
+        logic = Casual
+    game = Game(logic,
                 csvdict,
                 areaA == "A",
                 VanillaAreas(),
@@ -148,6 +155,9 @@ def write_rom(options: dict, game: Game, romWriter: Optional[RomWriter] = None) 
 
     rom_name = f"Nature{game.seed}.sfc"
     rom1_path = f"roms/{rom_name}"
+    if options.get('destination'):
+        rom_name = os.path.split(options['destination'])[1]
+        rom1_path = options['destination']
     rom_clean_path = options.get('rom', "roms/Nature.sfc")
 
     if romWriter is None :
@@ -207,11 +217,12 @@ def get_spoiler(game: Game) -> str:
 
     return s
 
-def write_spoiler_file(game: Game, rom_name: str) -> None:
+def write_spoiler_file(game: Game, rom_name: str, dest_dir: str='spoilers') -> None:
     text = get_spoiler(game)
-    with open(f"spoilers/{rom_name}.spoiler.txt", "w") as spoiler_file:
+    dest = os.path.join(dest_dir, f'{rom_name}.spoiler.txt')
+    with open(dest, "w") as spoiler_file:
         spoiler_file.write(text)
-    print(f"Spoiler file is spoilers/{rom_name}.spoiler.txt")
+    print(f"Spoiler file is {dest}")
 
 def forward_fill(game: Game,
                  fillChoice: Literal["M", "S", "MM"],

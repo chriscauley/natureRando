@@ -2,7 +2,7 @@ import csv
 from typing import Optional, TypedDict, cast
 
 from item_data import Item
-
+import os
 
 # other unused columns in Location:
 # "roomid", "area", "xy","plmtypename","state","roomname","alternateroomid"
@@ -79,7 +79,9 @@ def pullCSV() -> dict[str, Location]:
     def commentfilter(line: str) -> bool:
         return (line[0] != '#')
 
-    with open('nature.csv', 'r') as csvfile:
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    nature_csv = os.path.join(dir_path, 'nature.csv')
+    with open(nature_csv, 'r') as csvfile:
         reader = csv.DictReader(filter(commentfilter, csvfile))
         for row in reader:
             # commas within fields -> array
