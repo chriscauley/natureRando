@@ -140,6 +140,7 @@ canUsePB = LogicShortcut(lambda loadout: (
     (PowerBomb in loadout)
 ))
 canIBJ = LogicShortcut(lambda loadout: (
+    loadout.can.ibj and
     (Morph in loadout) and
     (Bombs in loadout)
 ))
@@ -188,7 +189,7 @@ beatGT = LogicShortcut(lambda loadout: (
     (Charge in loadout)
 ))
 maridia = LogicShortcut(lambda loadout: (
-    (inBrinstar in loadout) and 
+    (inBrinstar in loadout) and
     (
         (SpaceJump in loadout) or
         (Ice in loadout) or
@@ -247,25 +248,56 @@ defeatDraygon = LogicShortcut(lambda loadout: (
         (Grapple in loadout) or
         (
             (GravitySuit in loadout) and
-            (SpeedBooster in loadout)
+            canShortCharge2 in loadout
             )
         )
 ))
 
-# This is complicated. Going to leave it disabled for now
-# might add it back in as a challenge setting
-canStoreShinespark = LogicShortcut(lambda loadout: False)
+canStoreSpark = LogicShortcut(lambda loadout: (
+    loadout.can.storeSpark and
+    (SpeedBooster in loadout)
+))
+
+# note: this is 22 tiles according to wiki.supermetroid.run
+# this almost long enough for draygon
+canShortCharge1 = LogicShortcut(lambda loadout: (
+    loadout.can.shortCharge1 and
+    (SpeedBooster in loadout)
+))
+
+# 17 tiles
+canShortCharge2 = LogicShortcut(lambda loadout: (
+    loadout.can.shortCharge2 and
+    (SpeedBooster in loadout)
+))
+
+# # 14.8 tiles
+# canShortCharge3 = LogicShortcut(lambda loadout: (
+#     loadout.can.shortCharge3 and
+#     (SpeedBooster in loadout)
+# ))
+
+# # 14.1 tiles
+# canShortCharge4 = LogicShortcut(lambda loadout: (
+#     loadout.can.shortCharge4 and
+#     (SpeedBooster in loadout)
+# ))
+
+canGravityJump = LogicShortcut(lambda loadout: (
+    (GravitySuit in loadout) and loadout.can.gravityJump
+))
 
 canSBJ = LogicShortcut(lambda loadout: (
     (Morph in loadout) and
-    (Springball in loadout)
+    (Springball in loadout) and
+    loadout.can.sbj
 ))
 
 waterJump6 = LogicShortcut(lambda loadout: (
-    (GravitySuit in loadout) or
+    (canGravityJump in loadout) or
     (HiJump in loadout) or
     (canSBJ in loadout) or
-    (canStoreShinespark in loadout)
+    (canStoreSpark in loadout)
 ))
 
 phantoon = LogicShortcut(lambda loadout: (
@@ -325,7 +357,7 @@ area_logic: AreaLogicType = {
         ("SunkenNestL", "RuinedConcourseTR"): lambda loadout: (
             True
             # TODO: Expert needs energy and casual doesn't? And Casual can do it with supers, but expert can't?
-        ),   
+        ),
     },
 }
 

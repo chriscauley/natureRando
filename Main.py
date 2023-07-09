@@ -88,7 +88,8 @@ def generate(options: dict) -> Game:
                 csvdict,
                 areaA == "A",
                 VanillaAreas(),
-                seeeed)
+                seeeed,
+                can = options.get('can'))
     while not seedComplete :
         if game.area_rando:  # area rando
             game.connections = areaRando.RandomizeAreas()
@@ -217,8 +218,10 @@ def get_spoiler(game: Game) -> str:
 
     return s
 
-def write_spoiler_file(game: Game, rom_name: str, dest_dir: str='spoilers') -> None:
+def write_spoiler_file(game: Game, rom_name: str, dest_dir: str) -> None:
     text = get_spoiler(game)
+    if dest_dir is None:
+        dest_dir = 'spoilers'
     dest = os.path.join(dest_dir, f'{rom_name}.spoiler.txt')
     with open(dest, "w") as spoiler_file:
         spoiler_file.write(text)
@@ -302,8 +305,9 @@ if __name__ == "__main__":
         'logic': Expert,
         'seed': random.randint(0, 9999999),
         'rom': 'roms/Nature.sfc',
+        'can': [],
     }
-    args = sys.argv[:]
+    args = sys.argv[1:]
     while args:
         option = args.pop(0)
         if option in ['-l', '--logic']:
@@ -318,6 +322,8 @@ if __name__ == "__main__":
             options['seed'] = int(args.pop(0))
         elif option in ['-r', '--rom']:
             options['rom'] = args.pop(0)
+        elif option == '--can':
+            options['can'] = args.pop(0).split(',')
         else:
             print(f'Warning: unrecognized option "{option}"')
 
