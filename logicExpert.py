@@ -35,79 +35,46 @@ from logic_shortcut import LogicShortcut
     Plasma, Screw, Charge, SpaceJump, Energy, Reserve, Burst
 ) = items_unpackable
 
-energy200 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 1
+_energy = lambda count: LogicShortcut(lambda loadout: (
+    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= count
 ))
 
-energy300 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 2
-))
-energy400 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 3
-))
-energy500 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 4
-))
-energy600 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 5
-))
-energy700 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 6
-))
-energy900 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 8
-))
-energy1000 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 9
-))
-energy1200 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 11
-))
-energy1500 = LogicShortcut(lambda loadout: (
-    loadout.count(Items.Energy) + loadout.count(Items.Reserve) >= 14
+energy200 = _energy(1)
+energy300 = _energy(2)
+energy400 = _energy(3)
+energy500 = _energy(4)
+energy600 = _energy(5)
+energy700 = _energy(6)
+energy800 = _energy(7)
+energy900 = _energy(8)
+energy1000 = _energy(9)
+energy1100 = _energy(10)
+energy1200 = _energy(11)
+energy1300 = _energy(12)
+energy1400 = _energy(13)
+energy1500 = _energy(14)
+
+_hellrun = lambda energyRequirement: LogicShortcut(lambda loadout: (
+    (Varia in loadout) or (
+        (energyRequirement in loadout) and
+        loadout.can.hellrun
+    )
 ))
 
-
-hellrun1 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy200 in loadout)
-))
-hellrun2 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy300 in loadout)
-))
-hellrun3 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy400 in loadout)
-))
-hellrun4 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy500 in loadout)
-))
-hellrun5 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy600 in loadout)
-))
-hellrun6 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy700 in loadout)
-))
-hellrun8 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy900 in loadout)
-))
-hellrun9 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy1000 in loadout)
-))
-hellrun11 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy1200 in loadout)
-))
-hellrun14 = LogicShortcut(lambda loadout: (
-    (Varia in loadout) or
-    (energy1500 in loadout)
-))
+hellrun1 = _hellrun(energy200)
+hellrun2 = _hellrun(energy300)
+hellrun3 = _hellrun(energy400)
+hellrun4 = _hellrun(energy500)
+hellrun5 = _hellrun(energy600)
+hellrun6 = _hellrun(energy700)
+hellrun7 = _hellrun(energy800)
+hellrun8 = _hellrun(energy900)
+hellrun9 = _hellrun(energy1000)
+hellrun10 = _hellrun(energy1100)
+hellrun11 = _hellrun(energy1200)
+hellrun12 = _hellrun(energy1300)
+hellrun13 = _hellrun(energy1400)
+hellrun14 = _hellrun(energy1500)
 
 missile10 = LogicShortcut(lambda loadout: (
     loadout.count(Items.Missile) * 5 >= 10
@@ -210,6 +177,7 @@ innerMaridia = LogicShortcut(lambda loadout: (
                 ) or
         (
             (   #Suitless
+                loadout.can.suitless and
                 (HiJump in loadout) and
                 (Springball in loadout) and
                 (Super in loadout) and
@@ -223,6 +191,7 @@ midMaridia = LogicShortcut(lambda loadout: (
     (
         (GravitySuit in loadout) or
         (   #Suitless
+            loadout.can.suitless and
             (HiJump in loadout) and
             (Springball in loadout) and
             (Super in loadout)

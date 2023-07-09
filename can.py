@@ -2,6 +2,8 @@ ALL_SKILLS = {
     'sbj': 'Spring Ball Jump',
     # 'sbj2': 'Double Spring Ball Jump',
     # 'sbj3': 'Triple Spring Ball Jump',
+    'hellrun': 'Hell Run',
+    'suitless': 'Suitless',
     'ibj': 'Infinite Bomb Jump',
     'gravityJump': 'Gravity Jump',
     'storeSpark': 'Store Shine Spark',
