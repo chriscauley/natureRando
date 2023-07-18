@@ -14,6 +14,7 @@ from logicCasual import Casual
 from logicExpert import Expert
 import logic_updater
 import fillAssumed
+import fillMajor
 import areaRando
 from romWriter import RomWriter
 from solver import solve
@@ -50,7 +51,8 @@ def write_location(romWriter: RomWriter, location: Location) -> None:
 
 
 fillers: dict[str, Type[FillAlgorithm]] = {
-    "AF": fillAssumed.FillAssumed,
+    "full": fillAssumed.FillAssumed,
+    "major": fillMajor.FillMajor,
 }
 
 
@@ -89,7 +91,8 @@ def generate(options: dict) -> Game:
                 areaA == "A",
                 VanillaAreas(),
                 seeeed,
-                can = options.get('can'))
+                can = options.get('can'),
+                splits=options.get('splits'))
     while not seedComplete :
         if game.area_rando:  # area rando
             game.connections = areaRando.RandomizeAreas()
@@ -118,7 +121,7 @@ def assumed_fill(game: Game) -> tuple[bool]:
         loc["item"] = None
     dummy_locations: list[Location] = []
     loadout = Loadout(game)
-    fill_algorithm = fillAssumed.FillAssumed(game.connections)
+    fill_algorithm = fillers[game.splits](game.connections)
     n_items_to_place = fill_algorithm.count_items_remaining()
     assert n_items_to_place <= len(game.all_locations), \
         f"{n_items_to_place} items to put in {len(game.all_locations)} locations"
@@ -141,6 +144,7 @@ def assumed_fill(game: Game) -> tuple[bool]:
             #completable, _, _ = solve(game)
             #completable = game.all_locations["Morph"]["item"] == Items.Morph
             completable = True
+            fill_algorithm.validate(game)
             if completable:
                 print("Item placements successful.")
             return completable
@@ -306,6 +310,7 @@ if __name__ == "__main__":
         'seed': random.randint(0, 9999999),
         'rom': 'roms/Nature.sfc',
         'can': [],
+        'splits': 'full',
     }
     args = sys.argv[1:]
     while args:
@@ -322,6 +327,10 @@ if __name__ == "__main__":
             options['seed'] = int(args.pop(0))
         elif option in ['-r', '--rom']:
             options['rom'] = args.pop(0)
+        elif option == '--splits':
+            options['splits'] = args.pop(0)
+            splits = ['full', 'major']
+            assert options['splits'] in splits, f'Splits must be one of {splits}'
         elif option == '--can':
             options['can'] = args.pop(0).split(',')
         else:
