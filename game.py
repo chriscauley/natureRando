@@ -13,8 +13,8 @@ def door_factory() -> dict[AreaDoor, Union[Item, LogicShortcut]]:
 
 @dataclass
 class GameOptions:
-    #but I fixed it
-    fill_choice: Literal["MM", "D"]
+    fill_choice: str
+    #Literal["MM", "D"]
 
 @dataclass
 class Game:
