@@ -2,7 +2,7 @@ import csv
 from typing import Optional, TypedDict, cast
 
 from item_data import Item
-import os
+
 
 # other unused columns in Location:
 # "roomid", "area", "xy","plmtypename","state","roomname","alternateroomid"
@@ -29,41 +29,47 @@ spacePortLocs = ["Ready Room",
                  "Aft Battery",
                  "Forward Battery"]
 
+
 majorLocs = frozenset([
-    "Morph Ball",
-    "Ceiling Energy Tank",
-    "Meme Route Energy",
-    "Bomb Torizo",
-    "Across from Bomb Torizo",
-    "Mushroom Top Energy Tank",
-    "Green Main Energy",
-    "Brinstar Reserve",
-    "Springball",
-    "Dachora Energy",
-    "Spore Open Energy",
-    "Charge Beam",
-    "Kraid Energy Tank",
-    "Varia Suit",
-    "Speed Booster",
-    "Burst Beam",
-    "Spazer",
-    "Screw Attack",
-    "Norfair Reserve",
-    "HiJump Energy",
-    "HiJump",
-    "Mama Turtle Energy Tank",
-    "Wave Beam",
-    "Mirror Energy",
-    "Above Draygon Energy",
-    "Maridia Reserve",
-    "Space Jump Energy",
-    "Space Jump",
-    "Plasma Beam",
-    "Wrecked Ship Reserve",
-    "Gravity Suit",
-    "Spark Across Moat Energy",
-    "Ice Beam",
-    "Grapple Beam",
+    "Ocean Vent Supply Depot",  # start of unique majors
+    "Sandy Cache",
+    "Shrine Of The Penumbra",
+    "Subterranean Burrow",
+    "Archives: SpringBall",
+    "Arena",
+    "Grand Vault",
+    "Harmonic Growth Enhancer",
+    "West Spore Field",
+    "Electromechanical Engine",
+    "Fire's Bane Shrine",
+    "Greater Inferno",
+    "Magma Chamber",
+    "Antelier",
+    "Chamber Of Wind",
+    "Crocomire's Lair",
+    "Equipment Locker",
+    "Weapon Research",
+    "Armory Cache 2",
+    "Syzygy Observatorium",
+    "Shrine Of The Animate Spark",
+    "Extract Storage",
+    "Torpedo Bay",  # end of unique majors
+    "Sandy Burrow: ETank",  # E Tanks
+    "Sediment Flow",
+    "Epiphreatic Crag",
+    "Mezzanine Concourse",
+    "Sensor Maintenance: ETank",
+    "Trophobiotic Chamber",
+    "Vulnar Caves Entrance",
+    "Warrior Shrine: ETank",
+    "Depressurization Valve",
+    "Gymnasium",
+    "Mining Cache",
+    "Containment Area",
+    "Water Garden",
+    "Reliquary Access",
+    "Summit Landing",
+    "Ready Room"
 ])
 
 
@@ -73,9 +79,7 @@ def pullCSV() -> dict[str, Location]:
     def commentfilter(line: str) -> bool:
         return (line[0] != '#')
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    nature_csv = os.path.join(dir_path, 'nature.csv')
-    with open(nature_csv, 'r') as csvfile:
+    with open('nature.csv', 'r') as csvfile:
         reader = csv.DictReader(filter(commentfilter, csvfile))
         for row in reader:
             # commas within fields -> array

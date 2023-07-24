@@ -1,7 +1,6 @@
-from collections import Counter, defaultdict
+from collections import Counter
 from typing import TYPE_CHECKING, Any, Iterable, Iterator, Optional, Union
 
-from can import Can
 from connection_data import AreaDoor
 from item_data import Item
 from logic_shortcut import LogicShortcut
@@ -33,7 +32,6 @@ class Loadout:
                  items: Optional[Iterable[Union[Item, AreaDoor]]] = None) -> None:
         self.game = game
         self.contents = ItemCounter(items)
-        self.can = Can(game.can)
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, Loadout):

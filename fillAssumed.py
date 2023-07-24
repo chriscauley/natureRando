@@ -127,6 +127,3 @@ class FillAssumed(FillAlgorithm):
     def remove_from_pool(self, item: Item) -> None:
         """ removes this item from the item pool """
         pass  # removed in placement function
-
-    def validate(self, locations):
-        pass

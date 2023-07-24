@@ -22,5 +22,3 @@ class Game:
     seed: int
     item_placement_spoiler: str = ""
     door_data: Mapping[AreaDoor, Union[Item, LogicShortcut]] = field(default_factory=door_factory)
-    can: list = field(default_factory=list)
-    splits: str = field(default_factory=str)
