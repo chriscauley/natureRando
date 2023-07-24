@@ -15,13 +15,7 @@ Element: Any  # pyscript built-in
 
 
 class WebParams(TypedDict):
-    area_rando: bool
-    small_spaceport: bool
-    escape_shortcuts: bool
-    fill: Literal["D", "B", "MM"]
-    cypher: str
-    tricks: list[str]
-    daphne_gate: bool
+    fill: Literal["D", "MM"]
 
 
 # the roll process is divided up to make the ui more responsive,
