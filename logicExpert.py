@@ -251,11 +251,29 @@ defeatDraygon = LogicShortcut(lambda loadout: (
             )
         )
 ))
+# This is complicated. Going to leave it disabled for now
+# might add it back in as a challenge setting
+canStoreShinespark = LogicShortcut(lambda loadout: False)
 
+canSBJ = LogicShortcut(lambda loadout: (
+    (Morph in loadout) and
+    (Springball in loadout)
+))
+
+waterJump6 = LogicShortcut(lambda loadout: (
+    (Gravity in loadout) or
+    (HiJump in loadout) or
+    (canSBJ in loadout) or
+    (canStoreShinespark in loadout)
+))
 phantoon = LogicShortcut(lambda loadout: (
     (inBrinstar in loadout) and
     (Missile in loadout) and
-    (Super in loadout)
+    (Super in loadout)  and
+    (
+        (waterJump6 in loadout) or
+        (ice in loadout) # freeze covern
+    )
 ))
 bowling = LogicShortcut(lambda loadout: (
     (phantoon in loadout) and
