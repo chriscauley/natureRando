@@ -83,7 +83,7 @@ function setup_roll_button() {
     const roll_button = document.getElementById("roll-button");
     roll_button.addEventListener("click", async () => {
         const activated_trick_names = [];
-        #adding fill
+        
         const fill_select = document.getElementById("fill");
 
         const params = {
