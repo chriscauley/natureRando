@@ -85,8 +85,8 @@ def generate(options: dict) -> Game:
     seedComplete = False
     randomizeAttempts = 0
     logic = Expert
-    if options['logic'] == 'casual':
-        logic = Casual
+    #if options['logic'] == 'casual':
+    #    logic = Casual
     game = Game(logic,
                 csvdict,
                 areaA == "A",
