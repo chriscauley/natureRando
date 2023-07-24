@@ -106,7 +106,11 @@ def generate(options: dict) -> Game:
         game.item_placement_spoiler += f"Starting randomization attempt: {randomizeAttempts}\n"
         game.item_placement_spoiler += f"Seed: {seeeed}"
         # now start randomizing
-        seedComplete = assumed_fill(game)
+        if options.fill_choice == "MM":
+                seedComplete = fill_major_minor(game)
+            else:
+                seedComplete = assumed_fill(game)
+        #seedComplete = assumed_fill(game)
         
     #_got_all, solve_lines, _locs = solve(game)
     #^ what is this?
