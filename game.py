@@ -11,6 +11,9 @@ from logic_shortcut import LogicShortcut
 def door_factory() -> dict[AreaDoor, Union[Item, LogicShortcut]]:
     return vanilla_doors
 
+@dataclass
+class GameOptions:
+    fill_choice: Literal[="MM", "D"]
 
 @dataclass
 class Game:
