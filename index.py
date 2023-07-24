@@ -6,7 +6,7 @@ from typing import Any, Literal, Optional, TypedDict
 # pyscript library
 import js  # type: ignore
 
-from game import Game
+from game import Game, GameOptions
 from romWriter import RomWriter
 from Main import generate, get_spoiler, write_rom
 
