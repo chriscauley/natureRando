@@ -107,7 +107,8 @@ def generate(options: dict) -> Game:
         game.item_placement_spoiler += f"Seed: {seeeed}"
         # now start randomizing
         if options.fill_choice == "MM":
-            seedComplete = fill_major_minor(game)
+            print("Trying MM fill")
+            seedComplete = assumed_fill(game)
         else:
             seedComplete = assumed_fill(game)
         #seedComplete = assumed_fill(game)
