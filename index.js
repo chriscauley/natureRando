@@ -87,13 +87,7 @@ function setup_roll_button() {
         const fill_select = document.getElementById("fill");
 
         const params = {
-            "area_rando": area_rando_box.checked,
-            "small_spaceport": small_spaceport_box.checked,
-            "escape_shortcuts": escape_shortcuts_box.checked,
-            "fill": fill_select.value,
-            "cypher": cypher_select.value,
-            "tricks": activated_trick_names,
-            "daphne_gate": daphne_box.checked
+            "fill": fill_select.value
         };
         
         roll_button.disabled = true;
