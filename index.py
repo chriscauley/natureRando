@@ -47,13 +47,14 @@ def roll1() -> bool:
 def roll2(params_str: str) -> None:
     global options
     print("roll2 initiated")
-    #print(params_str)
-    #params: WebParams = json.loads(params_str)
+    print(params_str)
+    params: WebParams = json.loads(params_str)
 
     #tricks: frozenset[Trick] = frozenset([getattr(Tricks, trick_name) for trick_name in params["tricks"]])
 
     # romWriter = RomWriter.fromBlankIps()  # TODO
-    #print(options)
+    options = GameOptions(params["fill"])
+    print(options)
 
 
 def roll3() -> bool:
