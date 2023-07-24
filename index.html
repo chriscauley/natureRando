@@ -15,6 +15,14 @@
         <input type="file" id="rom" name="rom" accept=".sfc, .smc" />
     </div>
     <div>
+        <label for="fill">fill:</label>
+
+        <select name="fill" id="fill">
+            <option value="D" selected="selected">full random</option>
+            <option value="MM">major/minor</option>
+        </select> 
+    </div>
+    <div>
         <button id="roll-button">roll</button><br /><span>Generation can take up to 90 seconds, and your browser might stop responding.</span>
     </div>
     <div id="status"></div>
