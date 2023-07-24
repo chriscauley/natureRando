@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Mapping, Type, Union
+from typing import TYPE_CHECKING, Literal, Mapping, Type, Union
 
 from connection_data import AreaDoor, vanilla_doors
 from item_data import Item
