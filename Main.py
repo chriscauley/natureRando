@@ -16,6 +16,7 @@ import logic_updater
 import fillAssumed
 import fillMajor
 import areaRando
+
 from romWriter import RomWriter
 from solver import solve
 
