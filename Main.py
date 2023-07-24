@@ -74,7 +74,7 @@ def generate(options: dict) -> Game:
     # while hudFlicker != "Y" and hudFlicker != "N" :
     #     hudFlicker= input("Enter Y to patch HUD flicker on emulator, or N to decline:")
     #     hudFlicker = hudFlicker.title()
-    seeeed = options['seed']
+    seeeed = random.randint(0, 9999999)
     random.seed(seeeed)
 
 
