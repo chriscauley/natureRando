@@ -261,7 +261,7 @@ canSBJ = LogicShortcut(lambda loadout: (
 ))
 
 waterJump6 = LogicShortcut(lambda loadout: (
-    (Gravity in loadout) or
+    (GravitySuit in loadout) or
     (HiJump in loadout) or
     (canSBJ in loadout) or
     (canStoreShinespark in loadout)
