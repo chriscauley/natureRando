@@ -1,5 +1,6 @@
 import random
 import sys
+import os
 from typing import Literal, Optional, Type
 import argparse
 
@@ -9,9 +10,11 @@ from game import Game
 from item_data import Item, Items, items_unpackable
 from loadout import Loadout
 from location_data import Location, pullCSV, spacePortLocs
+from logicCasual import Casual
 from logicExpert import Expert
 import logic_updater
 import fillAssumed
+import fillMajor
 import areaRando
 from romWriter import RomWriter
 from solver import solve
@@ -48,18 +51,21 @@ def write_location(romWriter: RomWriter, location: Location) -> None:
 
 
 fillers: dict[str, Type[FillAlgorithm]] = {
-    "AF": fillAssumed.FillAssumed,
+    "full": fillAssumed.FillAssumed,
+    "major": fillMajor.FillMajor,
 }
 
 
 # main program
-def Main(argv: list[str], romWriter: Optional[RomWriter] = None) -> None:
-    game = generate()
-    rom_name = write_rom(game)
-    write_spoiler_file(game, rom_name)
+def Main(options: dict, romWriter: Optional[RomWriter] = None) -> None:
+    game = generate(options)
+    rom_name = write_rom(options, game)
+    dest_dir = None
+    if options.get('destination'):
+        dest_dir = os.path.dirname(options['destination'])
+    write_spoiler_file(game, rom_name, dest_dir)
 
-def generate() -> Game:
-    logicChoice = "E"
+def generate(options: dict) -> Game:
     fillChoice = "D"
     areaA = ""
     
@@ -68,7 +74,7 @@ def generate() -> Game:
     # while hudFlicker != "Y" and hudFlicker != "N" :
     #     hudFlicker= input("Enter Y to patch HUD flicker on emulator, or N to decline:")
     #     hudFlicker = hudFlicker.title()
-    seeeed = random.randint(0, 9999999)
+    seeeed = options['seed']
     random.seed(seeeed)
 
 
@@ -77,11 +83,16 @@ def generate() -> Game:
     
     seedComplete = False
     randomizeAttempts = 0
-    game = Game(Expert,
+    logic = Expert
+    if options['logic'] == 'casual':
+        logic = Casual
+    game = Game(logic,
                 csvdict,
                 areaA == "A",
                 VanillaAreas(),
-                seeeed)
+                seeeed,
+                can = options.get('can'),
+                splits=options.get('splits'))
     while not seedComplete :
         if game.area_rando:  # area rando
             game.connections = areaRando.RandomizeAreas()
@@ -110,7 +121,7 @@ def assumed_fill(game: Game) -> tuple[bool]:
         loc["item"] = None
     dummy_locations: list[Location] = []
     loadout = Loadout(game)
-    fill_algorithm = fillAssumed.FillAssumed(game.connections)
+    fill_algorithm = fillers[game.splits](game.connections)
     n_items_to_place = fill_algorithm.count_items_remaining()
     assert n_items_to_place <= len(game.all_locations), \
         f"{n_items_to_place} items to put in {len(game.all_locations)} locations"
@@ -133,13 +144,14 @@ def assumed_fill(game: Game) -> tuple[bool]:
             #completable, _, _ = solve(game)
             #completable = game.all_locations["Morph"]["item"] == Items.Morph
             completable = True
+            fill_algorithm.validate(game)
             if completable:
                 print("Item placements successful.")
             return completable
 
     return False
 
-def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
+def write_rom(options: dict, game: Game, romWriter: Optional[RomWriter] = None) -> str:
     
     logicChoice = "E"
 
@@ -148,7 +160,10 @@ def write_rom(game: Game, romWriter: Optional[RomWriter] = None) -> str:
 
     rom_name = f"Nature{game.seed}.sfc"
     rom1_path = f"roms/{rom_name}"
-    rom_clean_path = "roms/Nature.sfc"
+    if options.get('destination'):
+        rom_name = os.path.split(options['destination'])[1]
+        rom1_path = options['destination']
+    rom_clean_path = options.get('rom', "roms/Nature.sfc")
 
     if romWriter is None :
         romWriter = RomWriter.fromFilePaths(origRomPath=rom_clean_path)
@@ -207,11 +222,14 @@ def get_spoiler(game: Game) -> str:
 
     return s
 
-def write_spoiler_file(game: Game, rom_name: str) -> None:
+def write_spoiler_file(game: Game, rom_name: str, dest_dir: str) -> None:
     text = get_spoiler(game)
-    with open(f"spoilers/{rom_name}.spoiler.txt", "w") as spoiler_file:
+    if dest_dir is None:
+        dest_dir = 'spoilers'
+    dest = os.path.join(dest_dir, f'{rom_name}.spoiler.txt')
+    with open(dest, "w") as spoiler_file:
         spoiler_file.write(text)
-    print(f"Spoiler file is spoilers/{rom_name}.spoiler.txt")
+    print(f"Spoiler file is {dest}")
 
 def forward_fill(game: Game,
                  fillChoice: Literal["M", "S", "MM"],
@@ -287,6 +305,37 @@ def forward_fill(game: Game,
 if __name__ == "__main__":
     import time
     t0 = time.perf_counter()
-    Main(sys.argv)
+    options = {
+        'logic': Expert,
+        'seed': random.randint(0, 9999999),
+        'rom': 'roms/Nature.sfc',
+        'can': [],
+        'splits': 'full',
+    }
+    args = sys.argv[1:]
+    while args:
+        option = args.pop(0)
+        if option in ['-l', '--logic']:
+            logic = args.pop(0).lower()
+            if option.startswith('e'):
+                options['logic'] = Expert
+            elif option.startswith('c'):
+                options['logic'] = Casual
+            else:
+                print(f'Warning: unrecognized logic option "{logic}"')
+        elif option in ['-s', '--seed']:
+            options['seed'] = int(args.pop(0))
+        elif option in ['-r', '--rom']:
+            options['rom'] = args.pop(0)
+        elif option == '--splits':
+            options['splits'] = args.pop(0)
+            splits = ['full', 'major']
+            assert options['splits'] in splits, f'Splits must be one of {splits}'
+        elif option == '--can':
+            options['can'] = args.pop(0).split(',')
+        else:
+            print(f'Warning: unrecognized option "{option}"')
+
+    Main(options)
     t1 = time.perf_counter()
     print(f"time taken: {t1 - t0}")
