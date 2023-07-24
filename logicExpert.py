@@ -272,7 +272,7 @@ phantoon = LogicShortcut(lambda loadout: (
     (Super in loadout)  and
     (
         (waterJump6 in loadout) or
-        (ice in loadout) # freeze covern
+        (Ice in loadout) # freeze covern
     )
 ))
 bowling = LogicShortcut(lambda loadout: (
