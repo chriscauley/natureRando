@@ -21,6 +21,7 @@ var rom_data = "";
 var modified_rom_data = "";
 var rom_name = "";
 var spoiler_text = "";
+var SKILLS
 
 function read_input_rom(file) {
     if (file) {
@@ -44,6 +45,34 @@ function read_input_rom(file) {
         reader.readAsDataURL(file);
     }
 }
+
+
+function setup_form() {
+    if (document.querySelector('py-splashscreen')) {
+        // we need to wait for python to load before we can get the skills
+        setTimeout(setup_form, 0.1)
+        return
+    }
+    const get_skills = pyscript.interpreter.globals.get('get_skills');
+    SKILLS = JSON.parse(get_skills())
+    const skillZone = document.getElementById('skill-zone')
+    skillZone.innerHtml = ""
+    Object.entries(SKILLS).forEach(([name, description]) => {
+        const div = document.createElement('div')
+        const label = document.createElement('label')
+        div.appendChild(label)
+        const checkbox = document.createElement('input')
+        checkbox.type = 'checkbox'
+        checkbox.name = name
+        checkbox.checked = true
+        label.appendChild(checkbox)
+        const span = document.createElement('span')
+        span.innerText = description
+        label.appendChild(span)
+        skillZone.appendChild(div)
+    })
+}
+
 
 function setup_file_loader() {
     const file_input = document.getElementById("rom");
@@ -83,13 +112,28 @@ function setup_roll_button() {
     const roll_button = document.getElementById("roll-button");
     roll_button.addEventListener("click", async () => {
         const activated_trick_names = [];
+        
+        const fill_select = document.getElementById("fill");
+
+        const params = {
+            "fill_choice": fill_select.value,
+            "can": [],
+        };
+        Object.keys(SKILLS).forEach((name) => {
+            const checkbox = document.querySelector(`[type=checkbox][name=${name}]`);
+            console.log(checkbox)
+            if (checkbox.checked) {
+                params.can.push(name)
+            }
+        })
+        console.log(params)
 
         roll_button.disabled = true;
         const status_div = document.getElementById("status");
         status_div.innerText = "rolling...";
         await sleep(0.01);
         const python_roll1_function = pyscript.interpreter.globals.get('roll1');
-        //const python_roll2_function = pyscript.interpreter.globals.get('roll2');
+        const python_roll2_function = pyscript.interpreter.globals.get('roll2');
         const python_roll3_function = pyscript.interpreter.globals.get('roll3');
         const python_roll4_function = pyscript.interpreter.globals.get('roll4');
         const roll1_success = python_roll1_function();
@@ -99,8 +143,8 @@ function setup_roll_button() {
             roll_button.disabled = false;
             return;
         }
-        // await sleep(0.01)
-        // python_roll2_function(JSON.stringify(params));
+        await sleep(0.01)
+        python_roll2_function(JSON.stringify(params));
         await sleep(0.01)
         const roll3_success = python_roll3_function();
         if (! roll3_success) {
@@ -162,4 +206,5 @@ window.addEventListener("load", (event) => {
     // populate_presets(trick_promise);
     setup_roll_button();
     setup_file_loader();
+    setup_form();
 });

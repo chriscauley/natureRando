@@ -8,11 +8,25 @@
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <script src='index.js'></script>
+    <style>
+      [type=checkbox] {
+          margin-right: 4px;
+      }
+    </style>
 </head>
 <body>
     <div>
         <label for="rom">original Nature rom</label>
         <input type="file" id="rom" name="rom" accept=".sfc, .smc" />
+    </div>
+    <div>
+        <label for="fill">fill:</label>
+
+        <select name="fill" id="fill">
+            <option value="D" selected="selected">full random</option>
+            <option value="MM">major/minor</option>
+        </select> 
+        <div id="skill-zone"></div>
     </div>
     <div>
         <button id="roll-button">roll</button><br /><span>Generation can take up to 90 seconds, and your browser might stop responding.</span>
@@ -25,7 +39,7 @@
                  "item_data.py", "game.py", "loadout.py", "location_data.py",
                  "logicCommon.py", "logicInterface.py", "logic_shortcut.py", 
                  "logic_updater.py", "romWriter.py", "solver.py", 
-                 "nature.csv", "Main.py", "logicExpert.py"]
+                 "nature.csv", "Main.py", "logicExpert.py", "logicCasual.py", "can.py", "fillMajor.py"]
     </py-config>
     <py-script src="./index.py"></py-script>
 </body>
