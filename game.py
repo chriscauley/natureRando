@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import random
 from typing import TYPE_CHECKING, Literal, Mapping, Type, Union
 
 from connection_data import AreaDoor, vanilla_doors
@@ -13,18 +14,19 @@ def door_factory() -> dict[AreaDoor, Union[Item, LogicShortcut]]:
 
 @dataclass
 class GameOptions:
+    logic: LogicInterface
     fill_choice: str
-    #Literal["MM", "D"]
+    can: list = field(default_factory=lambda: [])
+    seed: int = field(default_factory=lambda: random.randint(0, 9999999))
+
 
 @dataclass
 class Game:
     """ a composition of all the components that make up the generated seed """
+    options: GameOptions
     logic: Type[LogicInterface]
     all_locations: dict[str, Location]
     area_rando: bool
     connections: list[tuple[AreaDoor, AreaDoor]]
-    seed: int
     item_placement_spoiler: str = ""
     door_data: Mapping[AreaDoor, Union[Item, LogicShortcut]] = field(default_factory=door_factory)
-    can: list = field(default_factory=list)
-    splits: str = field(default_factory=str)

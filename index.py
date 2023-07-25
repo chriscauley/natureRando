@@ -6,12 +6,13 @@ from typing import Any, Literal, Optional, TypedDict
 # pyscript library
 import js  # type: ignore
 
+from can import ALL_SKILLS
 from game import Game, GameOptions
+from logicExpert import Expert
 from romWriter import RomWriter
 from Main import generate, get_spoiler, write_rom
 
 Element: Any  # pyscript built-in
-
 
 
 class WebParams(TypedDict):
@@ -26,6 +27,10 @@ class WebParams(TypedDict):
 rom_writer: Optional[RomWriter] = None
 options  = None
 game: Optional[Game] = None
+
+
+def get_skills() -> str:
+    return json.dumps(ALL_SKILLS)
 
 
 def roll1() -> bool:
@@ -47,18 +52,23 @@ def roll1() -> bool:
 def roll2(params_str: str) -> None:
     global options
     print("roll2 initiated")
-    print(params_str)
+    print("Javascript params:", params_str)
     params: WebParams = json.loads(params_str)
 
     #tricks: frozenset[Trick] = frozenset([getattr(Tricks, trick_name) for trick_name in params["tricks"]])
 
     # romWriter = RomWriter.fromBlankIps()  # TODO
-    options = GameOptions(params["fill"])
+    options = GameOptions(
+        logic=Expert,
+        fill_choice=params["fill_choice"],
+        can=params["can"],
+    )
     print(options)
 
 
 def roll3() -> bool:
     global game
+    global options
     print("roll3 initiated")
     #assert options
     game = generate(options)

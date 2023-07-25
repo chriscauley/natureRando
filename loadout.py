@@ -33,7 +33,7 @@ class Loadout:
                  items: Optional[Iterable[Union[Item, AreaDoor]]] = None) -> None:
         self.game = game
         self.contents = ItemCounter(items)
-        self.can = Can(game.can)
+        self.can = Can(game.options.can)
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, Loadout):

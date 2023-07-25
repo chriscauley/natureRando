@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <script src='index.js'></script>
+    <style>
+      [type=checkbox] {
+          margin-right: 4px;
+      }
+    </style>
 </head>
 <body>
     <div>
@@ -21,6 +26,7 @@
             <option value="D" selected="selected">full random</option>
             <option value="MM">major/minor</option>
         </select> 
+        <div id="skill-zone"></div>
     </div>
     <div>
         <button id="roll-button">roll</button><br /><span>Generation can take up to 90 seconds, and your browser might stop responding.</span>
