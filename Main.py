@@ -70,8 +70,7 @@ def generate(options: dict) -> Game:
     # while hudFlicker != "Y" and hudFlicker != "N" :
     #     hudFlicker= input("Enter Y to patch HUD flicker on emulator, or N to decline:")
     #     hudFlicker = hudFlicker.title()
-    seeeed = random.randint(0, 9999999)
-    random.seed(seeeed)
+    random.seed(options.seed)
 
 
     csvdict = pullCSV()
@@ -98,7 +97,7 @@ def generate(options: dict) -> Game:
         print("Starting randomization attempt:", randomizeAttempts)
         game.item_placement_spoiler = ""
         game.item_placement_spoiler += f"Starting randomization attempt: {randomizeAttempts}\n"
-        game.item_placement_spoiler += f"Seed: {seeeed}"
+        game.item_placement_spoiler += f"Seed: {game.options.seed}"
         # now start randomizing
         seedComplete = assumed_fill(game)
         #seedComplete = assumed_fill(game)
