@@ -21,6 +21,7 @@ var rom_data = "";
 var modified_rom_data = "";
 var rom_name = "";
 var spoiler_text = "";
+var SKILLS
 
 function read_input_rom(file) {
     if (file) {
@@ -44,6 +45,34 @@ function read_input_rom(file) {
         reader.readAsDataURL(file);
     }
 }
+
+
+function setup_form() {
+    if (document.querySelector('py-splashscreen')) {
+        // we need to wait for python to load before we can get the skills
+        setTimeout(setup_form, 0.1)
+        return
+    }
+    const get_skills = pyscript.interpreter.globals.get('get_skills');
+    SKILLS = JSON.parse(get_skills())
+    const skillZone = document.getElementById('skill-zone')
+    skillZone.innerHtml = ""
+    Object.entries(SKILLS).forEach(([name, description]) => {
+        const div = document.createElement('div')
+        const label = document.createElement('label')
+        div.appendChild(label)
+        const checkbox = document.createElement('input')
+        checkbox.type = 'checkbox'
+        checkbox.name = name
+        checkbox.checked = true
+        label.appendChild(checkbox)
+        const span = document.createElement('span')
+        span.innerText = description
+        label.appendChild(span)
+        skillZone.appendChild(div)
+    })
+}
+
 
 function setup_file_loader() {
     const file_input = document.getElementById("rom");
@@ -87,9 +116,18 @@ function setup_roll_button() {
         const fill_select = document.getElementById("fill");
 
         const params = {
-            "fill": fill_select.value
+            "fill_choice": fill_select.value,
+            "can": [],
         };
-        
+        Object.keys(SKILLS).forEach((name) => {
+            const checkbox = document.querySelector(`[type=checkbox][name=${name}]`);
+            console.log(checkbox)
+            if (checkbox.checked) {
+                params.can.push(name)
+            }
+        })
+        console.log(params)
+
         roll_button.disabled = true;
         const status_div = document.getElementById("status");
         status_div.innerText = "rolling...";
@@ -168,4 +206,5 @@ window.addEventListener("load", (event) => {
     // populate_presets(trick_promise);
     setup_roll_button();
     setup_file_loader();
+    setup_form();
 });
