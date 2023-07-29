@@ -1,3 +1,4 @@
+from collections import defaultdict
 import random
 import sys
 import os
@@ -75,7 +76,7 @@ def generate(options: dict) -> Game:
 
     csvdict = pullCSV()
     locArray = list(csvdict.values())
-    
+
     seedComplete = False
     randomizeAttempts = 0
     logic = Expert
@@ -291,15 +292,16 @@ def forward_fill(game: Game,
     return False, spoilerSave
 
 
-if __name__ == "__main__":
-    import time
-    t0 = time.perf_counter()
+def args_to_options(args):
+    args = args[:]
     options = GameOptions(
         logic=Expert,
         fill_choice='D',
         can=[],
     )
-    args = sys.argv[1:]
+
+    # used in logic explorer (web.py)
+    options._inventory = defaultdict(int)
     while args:
         option = args.pop(0)
         if option in ['-l', '--logic']:
@@ -318,9 +320,18 @@ if __name__ == "__main__":
             options.fill_choice = 'MM'
         elif option == '--can':
             options.can = args.pop(0).split(',')
+        elif option == '--inventory':
+            names = args.pop(0).split(',')
+            for name in names:
+                options._inventory[name] += 1
         else:
             print(f'Warning: unrecognized option "{option}"')
+    return options
 
-    Main(options)
+if __name__ == "__main__":
+    import time
+    t0 = time.perf_counter()
+
+    Main(args_to_options(sys.argv[1:]))
     t1 = time.perf_counter()
     print(f"time taken: {t1 - t0}")
